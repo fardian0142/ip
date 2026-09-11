@@ -1,0 +1,42 @@
+name: IP Bot Runner
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache database
+        uses: actions/cache@v4
+        with:
+          path: sent_ips.db
+          key: sent-ips-db-${{ github.run_id }}
+          restore-keys: |
+            sent-ips-db-
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Send update trigger to worker
+        run: |
+          curl -X POST ${{ secrets.WORKER_URL }} \
+            -H "Content-Type: application/json" \
+            -d '{"action":"update_repo"}'
+
+      - name: Run bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        run: python bot.py
