@@ -564,7 +564,7 @@ def send_ips_to_channel(
         "and sticker."
     )
 
-    sender.delete_previous_messages()
+    #sender.delete_previous_messages()
 
     total_sent = 0
     posts = 0
