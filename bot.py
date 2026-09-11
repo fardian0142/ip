@@ -540,7 +540,7 @@ def generate_caption(ips):
 
 
 ➖➖➖➖➖➖➖➖
-<blockquote>@aristapanel</blockquote>
+<blockquote>@AristaProxy</blockquote>
 ➖➖➖➖➖➖➖➖
 #Arista #ip #clean_ip #ٱی‌پی_تمیز
 <blockquote>مرگ بر جمهوری اسهالی</blockquote>"""
