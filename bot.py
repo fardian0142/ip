@@ -11,7 +11,7 @@ CHANNEL_ID = os.environ.get("CHANNEL_ID")
 if not BOT_TOKEN or not CHANNEL_ID:
     raise ValueError("BOT_TOKEN and CHANNEL_ID must be set in environment!")
 
-URL = "https://raw.githubusercontent.com/aristapanell-cell/ARISTA-MATRIX-PIPELINE/refs/heads/main/output/best_ips.txt"
+URL = "https://github.com/newtest2354-commits/Test6iP/raw/refs/heads/main/output/best_ips.txt"
 
 MAX_IPS_PER_POST = 200
 MAX_POSTS_PER_RUN = 1
