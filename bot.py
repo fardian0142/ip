@@ -13,8 +13,8 @@ if not BOT_TOKEN or not CHANNEL_ID:
 
 URL = "https://github.com/newtest2354-commits/Test6iP/raw/refs/heads/main/output/best_ips.txt"
 
-MAX_IPS_PER_POST = 200
-MAX_POSTS_PER_RUN = 1
+MAX_IPS_PER_POST = 100
+MAX_POSTS_PER_RUN = 3
 KEEP_HOURS = 720
 
 logging.basicConfig(
@@ -536,9 +536,11 @@ def generate_caption(ips):
 
 ‼️ <b>جهت جواب‌دهی هرچه بهتر، قبل از استفاده ipها رو کپی و با Vpn خاموش اسکن کنید.</b>
 
+<blockquote><b>🔹 <a href="https://t.me/aristapanel/47250">اسکنر آریستا</a></b></blockquote>
+
 
 ➖➖➖➖➖➖➖➖
-<blockquote>@AristaProxy</blockquote>
+<blockquote>@aristapanel</blockquote>
 ➖➖➖➖➖➖➖➖
 #Arista #ip #clean_ip #ٱی‌پی_تمیز
 <blockquote>مرگ بر جمهوری اسهالی</blockquote>"""
