@@ -85,11 +85,6 @@ class TelegramSender:
 
             message_id = result["result"]["message_id"]
 
-            save_bot_message(
-                message_id,
-                "sticker"
-            )
-
             logger.info(
                 f"Logo sticker sent successfully: {message_id}"
             )
@@ -127,11 +122,6 @@ class TelegramSender:
 
             message_id = result["result"]["message_id"]
 
-            save_bot_message(
-                message_id,
-                "ip"
-            )
-
             logger.info(
                 f"IP message sent successfully: {message_id}"
             )
@@ -143,69 +133,6 @@ class TelegramSender:
         )
 
         return None
-
-    def delete_message(self, message_id):
-
-        result = self._request(
-            "deleteMessage",
-            {
-                "chat_id": self.chat_id,
-                "message_id": message_id
-            }
-        )
-
-        if result and result.get("ok"):
-
-            logger.info(
-                f"Deleted Telegram message: {message_id}"
-            )
-
-            return True
-
-        return False
-
-    def delete_previous_messages(self):
-
-        previous_messages = get_bot_messages()
-
-        if not previous_messages:
-
-            logger.info(
-                "No previous bot messages found."
-            )
-
-            return True
-
-        logger.info(
-            f"Found {len(previous_messages)} "
-            f"previous bot messages."
-        )
-
-        all_deleted = True
-
-        for message_id, message_type in previous_messages:
-
-            if self.delete_message(message_id):
-
-                delete_bot_message_record(
-                    message_id
-                )
-
-                logger.info(
-                    f"Previous {message_type} removed: "
-                    f"{message_id}"
-                )
-
-            else:
-
-                all_deleted = False
-
-                logger.warning(
-                    f"Could not remove previous "
-                    f"{message_type}: {message_id}"
-                )
-
-        return all_deleted
 
 
 def init_db():
@@ -223,14 +150,6 @@ def init_db():
             )
         """)
 
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS bot_messages (
-                message_id INTEGER PRIMARY KEY,
-                message_type TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
         conn.commit()
 
     finally:
@@ -245,6 +164,8 @@ def init_db():
 def clean_old_ips():
 
     conn = sqlite3.connect(DB_PATH)
+
+    deleted = 0
 
     try:
 
@@ -342,92 +263,6 @@ def mark_as_sent_batch(ips):
     logger.info(
         f"Marked {len(ips)} IPs as sent."
     )
-
-
-def save_bot_message(
-    message_id,
-    message_type
-):
-
-    conn = sqlite3.connect(DB_PATH)
-
-    try:
-
-        c = conn.cursor()
-
-        c.execute(
-            """
-            INSERT OR REPLACE INTO bot_messages
-            (message_id, message_type, created_at)
-            VALUES (?, ?, ?)
-            """,
-            (
-                message_id,
-                message_type,
-                datetime.now()
-            )
-        )
-
-        conn.commit()
-
-    finally:
-
-        conn.close()
-
-    logger.info(
-        f"Saved {message_type} message: "
-        f"{message_id}"
-    )
-
-
-def get_bot_messages():
-
-    conn = sqlite3.connect(DB_PATH)
-
-    try:
-
-        c = conn.cursor()
-
-        c.execute(
-            """
-            SELECT message_id, message_type
-            FROM bot_messages
-            ORDER BY message_id ASC
-            """
-        )
-
-        rows = c.fetchall()
-
-    finally:
-
-        conn.close()
-
-    return rows
-
-
-def delete_bot_message_record(
-    message_id
-):
-
-    conn = sqlite3.connect(DB_PATH)
-
-    try:
-
-        c = conn.cursor()
-
-        c.execute(
-            """
-            DELETE FROM bot_messages
-            WHERE message_id = ?
-            """,
-            (message_id,)
-        )
-
-        conn.commit()
-
-    finally:
-
-        conn.close()
 
 
 def extract_ips_from_text(text):
@@ -558,13 +393,6 @@ def send_ips_to_channel(
         )
 
         return 0
-
-    logger.info(
-        "Removing previous IP messages "
-        "and sticker."
-    )
-
-    #sender.delete_previous_messages()
 
     total_sent = 0
     posts = 0
